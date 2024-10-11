@@ -1,14 +1,25 @@
-import 'package:practice_1/features/core/data/debug/weather_repository_debug.dart';
-import 'package:practice_1/features/core/data/osm/osm_api.dart';
-import 'package:practice_1/features/core/data/osm/weather_repository_osm.dart';
+import 'dart:io';
+
+import 'package:practice_1/features/core/data/weatherapi/repository.dart';
+import 'package:practice_1/features/core/data/weatherapi/weather_api.dart';
 import 'package:practice_1/features/core/presentation/app.dart';
 
 const String version = '0.0.1';
-const String url = 'https://api.openweathermap.org';
-const String apiKey = 'f11a8d09666e4acbd56e3ecc1ccbe31b';
 
 void main(List<String> arguments) {
-  var app = App(WeatherRepositoryDebug());
+
+  var apiKey = Platform.environment['API_KEY'];
+
+  if (apiKey == null) {
+    print('API_KEY не задан.');
+    return;
+  }
+
+  // var api = OSMApi(apiKey);
+  // var app = App(WeatherRepositoryOSM(api2));
+
+  var api = WeatherAPI(apiKey);
+  var app = App(WeatherAPIRepository(api));
 
   app.run();
 }

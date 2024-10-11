@@ -8,15 +8,42 @@ class App {
   App(this.repository);
 
   void run() async {
-    print('Введите город:');
-    var city = stdin.readLineSync();
+    SearchQuery query;
 
-    if (city == null) {
-      print('Ошибка ввода');
-      return;
+    print('Выберите:\n'
+        '1: Ввести город\n'
+        '2: Ввести координаты');
+    var type = stdin.readLineSync();
+
+    switch (type){
+      case '1':
+        var city = stdin.readLineSync();
+        if (city == null) {
+          return;
+        }
+
+        query = SearchQueryCity(city);
+        break;
+      case '2':
+        var latitude = stdin.readLineSync();
+        var longitude = stdin.readLineSync();
+        if (longitude == null || latitude == null) {
+          return;
+        }
+
+        query = SearchQueryCords(double.parse(latitude), double.parse(longitude));
+        break;
+      default:
+        print('Некорректный ввод. Пожалуйста, выберите 1 или 2');
+        return;
     }
 
-    var resp = await repository.getWeather(SearchQuery(city));
-    print('Погода в городе $city: ${resp.temp-273} по Цельсию, тип: ${resp.type}');
+    try {
+      var resp = await repository.getWeather(query);
+      print('Погода: ${resp.temp} по Цельсию, тип: ${resp.type}');
+    } catch (e) {
+      print('Произошла ошибка: $e');
+      return;
+    }
   }
 }
